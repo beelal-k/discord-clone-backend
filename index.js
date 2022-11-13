@@ -3,22 +3,29 @@ require('dotenv').config()
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const http =  require('http').Server(app)
-const socket = require('socket.io')(http, {
-    cors: {
-        origin: 'http://localhost:3000'
-    }
-})
+const http = require('http')
+const { Server } = require('socket.io');
 
+const server = http.createServer(app);
 app.use(cors());
-app.use(express.json());
 
-socket.on('connection', (socket) => {
-    console.log(`user ${socket.id} just connected!`)
+const io = new Server(server,  {
+    cors:{
+        origin: "http://localhost:3000"
+    }
+    
 })
-socket.on('disconnect', (socket) => {
-    console.log(`user ${socket.id} disconnected`)
+
+
+io.on('connection', (socket) =>{
+    console.log(`User connected with ID: ${socket.id}`)
+
+    socket.on('send-message', (data) =>{
+        console.log(data)
+    })
+    
 })
+
 
 
 
@@ -28,8 +35,6 @@ app.get('/', (req, res) => {
 
 })
 
-
-http.listen(process.env.SERVER_PORT, () => {
-    console.log('Server started!');
-
+server.listen(process.env.SERVER_PORT, () =>{
+    console.log('Server started!')
 })
