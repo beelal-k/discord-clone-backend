@@ -21,7 +21,7 @@ io.on('connection', (socket) =>{
     console.log(`User connected with ID: ${socket.id}`)
 
     socket.on('send-message', (data) =>{
-        console.log(data)
+        socket.broadcast.emit('receive-message',data);
     })
     
 })
